@@ -1,6 +1,6 @@
 # NYC Bar & Restaurant Closings Database
 
-The databse: https://docs.google.com/spreadsheets/d/1lneaVuUM9EA4eCQO_EwnMMlQb_eRow7OsKOkNutiaEo/edit?usp=sharing
+The 'databse': https://docs.google.com/spreadsheets/d/1lneaVuUM9EA4eCQO_EwnMMlQb_eRow7OsKOkNutiaEo/edit?usp=sharing
 
 ## Sources (I've scraped to date)
 * https://www.curbed.com/article/nyc-businesses-closed-2020-pandemic.html
