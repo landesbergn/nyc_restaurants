@@ -4,10 +4,12 @@ library(rvest) # for web scraping
 library(dplyr) # for data tidying
 library(stringr) # for working with strings
 library(tidytext) # analyze text data!
-library(ggplot2) # make nice plots
-library(scales) # make plots even nicer
 library(tidyr) # for data organization
 library(purrr) # for iteration
+library(googlesheets4) # for writing to googlesheets
+library(googleway)
+library(ggmap)
+library(RCurl)
 
 curbed_url <- "https://www.curbed.com/article/nyc-businesses-closed-2020-pandemic.html"
 
@@ -64,7 +66,9 @@ curbed_final <- curbed_clean %>%
   mutate(
     category = case_when(
       grepl("Restaurant", name) ~ "Restaurant",
+      grepl("Vegetarian Restaurant", name) ~ "Vegetarian Restaurant",
       grepl("Department Store", name) ~ "Department Store",
+      grepl("Hookah Bar", name) ~ "Hookah Bar",
       grepl("Bar", name) ~ "Bar",
       grepl("Coffee Shop", name) ~ "Coffee Shop",
       grepl("Salon", name) ~ "Salon",
@@ -74,6 +78,7 @@ curbed_final <- curbed_clean %>%
       grepl("Tobacco Shop", name) ~ "Hotel",
       grepl("Nightclub", name) ~ "Nightclub",
       grepl("Deli", name) ~ "Deli",
+      grepl("Delicatessen", name) ~ "Delicatessen",
       grepl("Dry Cleaner", name) ~ "Dry Cleaner",
       grepl("Venue", name) ~ "Venue",
       grepl("School", name) ~ "School",
@@ -91,7 +96,7 @@ curbed_final <- curbed_clean %>%
       grepl("Art Gallery", name) ~ "Art Gallery",
       grepl("Diner", name) ~ "Diner",
       grepl("Shipping Service", name) ~ "Shipping Service",
-      grepl("Café", name) ~ "Cafe",
+      grepl("Café", name) ~ "Café",
       grepl("Speakeasy", name) ~ "Speakeasy",
       grepl("Clothing Store", name) ~ "Clothing Store",
       grepl("Theater", name) ~ "Theater",
@@ -135,16 +140,36 @@ curbed_final <- curbed_clean %>%
       grepl("Secondhand Store", name) ~ "Secondhand Store",
       TRUE ~ "NA"
     )
+  ) %>%
+  filter(
+    category %in% c("Restaurant", "Bar", "Café", "Diner",
+                    "Beer Hall", "Coffee Shop", "Deli", "Pub",
+                    "Bakery", "Pizzaria", "Delicatessen")
+    ) %>%
+  mutate(
+    name = str_remove_all(name, category)
   )
 
-## To-do
-## - hydrate data with google API
+url_google_place_search <- function(search_query_url, key_url) {
+  # convert input into a list
+  search_query_url <- sapply(search_query_url, as.list)
+  # google places api url
+  url_places_api <- "https://maps.googleapis.com/maps/api/place/"
+  # percent-encode search request
+  search_query_url <- sapply(search_query_url, URLencode)
+  # construct search request for place id
+  url_place_search_call <- paste0(url_places_api, "findplacefromtext/",
+                                  "json", "?input=", search_query_url,
+                                  "&inputtype=textquery","&fields=place_id",
+                                  "&key=", "AIzaSyBzXOTbuKPa-jrU5rtgG5XrhnSmbWn-V5Y")
+  return(url_place_search_call)
+}
 
-curbed_final %>%
-  filter(category %in% c("Restaurant", "Bar", "Cafe", "Diner", "Beer Hall", "Coffee Shop", "Deli", "Pub", "Bakery", "Pizzaria")) %>%
-  group_by(category) %>%
-  tally() %>%
-  ggplot(aes(x = reorder(category, -n), y = n, fill = category)) +
-    geom_col() +
-    coord_flip()
+# curbed_mini <- curbed_final %>% head()
 
+# curbed_places <-
+#   curbed_mini %>%
+#   rowwise() %>%
+#   mutate(
+#     place_data <- googleway::google_places(paste(name, neighborhood))$results$name[1]
+#   )
