@@ -4,7 +4,7 @@ The 'databse': https://docs.google.com/spreadsheets/d/1lneaVuUM9EA4eCQO_EwnMMlQb
 
 ## Sources (I've scraped to date)
 * https://www.curbed.com/article/nyc-businesses-closed-2020-pandemic.html
-* https://www.curbed.com/article/nyc-businesses-closed-2020-pandemic.html
+* https://www.theinfatuation.com/new-york/features/nyc-restaurant-closings
 
 ## More sources
 * https://www.saverestaurants.com/closures/
