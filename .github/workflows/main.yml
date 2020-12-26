@@ -1,7 +1,24 @@
-- name: googlesheet-actions
-  # You may pin to the exact commit or the version.
-  # uses: rjoydip/googlesheet-actions@20662d6a790e055e6df7ba33e03a050220cc722b
-  uses: rjoydip/googlesheet-actions@0.1.1
-  with:
-    # google sheet id
-    sheet-id: 1lneaVuUM9EA4eCQO_EwnMMlQb_eRow7OsKOkNutiaEo
+name: googlesheet-actions
+
+on:
+    push:
+      branches:
+        - master
+
+jobs:
+    fetch:
+      runs-on: ubuntu-latest
+      steps:
+        - id: googlesheet_actions
+          uses: rjoydip/googlesheet-actions@0.1.1
+          with:
+            sheet-id: 1lneaVuUM9EA4eCQO_EwnMMlQb_eRow7OsKOkNutiaEo
+        - id: echo
+          uses: actions/github-script@v2
+          with:
+            github-token: ${{secrets.GITHUB_TOKEN}}
+            script: |
+                console.log(${{steps.googlesheet_actions.outputs.result}})
+        - name: test
+          run: |
+            cat $HOME/data.json
